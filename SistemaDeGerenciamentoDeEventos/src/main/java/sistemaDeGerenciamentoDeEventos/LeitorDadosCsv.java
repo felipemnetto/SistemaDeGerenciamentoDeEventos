@@ -1,4 +1,4 @@
-package com.brigofelipe;
+package sistemaDeGerenciamentoDeEventos;
 
 import java.io.IOException;
 import java.math.BigDecimal;
