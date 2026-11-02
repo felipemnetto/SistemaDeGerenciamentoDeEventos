@@ -1,0 +1,62 @@
+@startuml Diagrama
+
+class Evento {
+    -id: int
+    -titulo: String
+    -descricao: String
+    -data: LocalDate
+    -hora: LocalTime
+    -local: String
+    -capacidadeMaxima: int
+    -precoBase: BigDecimal
+    -percentualDescontoPromocional: BigDecimal
+    -limiteIngressosPromocionais: int
+    -tipo: TipoEvento
+    +calcularDisponibilidade(): int
+    +calcularDisponibilidadePromocional(): int
+    +calcularOcupacao(): BigDecimal
+}
+
+enum TipoEvento {
+    CULTURAL
+    ESPORTIVO
+    ACADEMICO
+}
+
+class Venda {
+    -id: int
+    -nomeComprador: String
+    -dataHora: LocalDateTime
+    -ingressos: List<Ingresso>
+    +calcularTotal(): BigDecimal
+}
+
+abstract class Ingresso {
+    -id: int
+    -nomeParticipante: String
+    -cpfParticipante: String
+    -precoFinal: BigDecimal
+    +calcularPreco(): BigDecimal
+    +permiteEntradaAntecipada(): boolean
+}
+
+class Inteira
+
+class MeiaEntrada {
+    -justificativa: String
+}
+
+class VIP
+class Promocional
+
+Evento --> TipoEvento
+Evento <-- Venda
+Venda *-- Ingresso
+Ingresso --> Evento
+
+Ingresso <|-- Inteira
+Ingresso <|-- MeiaEntrada
+Ingresso <|-- VIP
+Ingresso <|-- Promocional
+
+@enduml
