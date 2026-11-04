@@ -1,5 +1,7 @@
 package sistemaDeGerenciamentoDeEventos;
 
+import java.math.BigDecimal;
+
 public abstract class Ingresso{
 
     private int id;
