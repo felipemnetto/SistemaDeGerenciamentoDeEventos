@@ -1,4 +1,4 @@
-package sistemaDeGerenciamentoDeEventos;
+package sistemaDeGerenciamentoDeEventos.ui;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.H1;
