@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Evento{
 
-    private int id, capacidadeMax, limitePromo;
+    private int id, capacidadeMax, limitePromo, vendidosTotal;
     private String titulo, descricao, local;
     private LocalDate data;
     private LocalTime horaInicio;
@@ -21,5 +21,34 @@ public class Evento{
         capacidadeMax = capMax;
         this.precoBase = preco;
         this.percentDescontoProm = precoDesc;
+    }
+
+    public void addListaVenda(Venda aux){
+        vendas.add(aux);
+        vendidosTotal = vendidosTotal + aux.QuantIngresso();
+
+    }
+
+    public int calcularDisponibilidade(){
+        return capacidadeMax-vendidosTotal;
+
+    }
+
+    public int calcularDisponibilidadePromocional(){
+        // placeholder
+        return 101;
+
+    }
+
+    public BigDecimal calcularOcupacao(){
+        BigDecimal lotacao = (vendidosTotal/capacidadeMax)*100;
+        return lotacao;
+    }
+
+    public BigDecimal getPrecoBase(){
+        return precoBase;
+    }
+    public BigDecimal getPercentDescontoProm(){
+        return percentDescontoProm;
     }
 }
