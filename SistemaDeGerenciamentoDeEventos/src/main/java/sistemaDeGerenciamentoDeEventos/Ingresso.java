@@ -6,7 +6,7 @@ public abstract class Ingresso{
     private String nome, cpf;
     private BigDecimal precoFinal;
 
-    public Ingresso(String nome, String cpf, int id, BigDecimal, precoFinal){
+    public Ingresso(String nome, String cpf, int id, BigDecimal precoFinal){
         this.nome = nome;
         this.cpf = cpf;
         this.id = id;
