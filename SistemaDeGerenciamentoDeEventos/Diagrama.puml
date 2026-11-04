@@ -5,22 +5,16 @@ class Evento {
     -titulo: String
     -descricao: String
     -data: LocalDate
-    -hora: LocalTime
+    -horaInicio: LocalTime
     -local: String
     -capacidadeMaxima: int
     -precoBase: BigDecimal
     -percentualDescontoPromocional: BigDecimal
     -limiteIngressosPromocionais: int
-    -tipo: TipoEvento
+    -vendas: List<Venda>
     +calcularDisponibilidade(): int
     +calcularDisponibilidadePromocional(): int
     +calcularOcupacao(): BigDecimal
-}
-
-enum TipoEvento {
-    CULTURAL
-    ESPORTIVO
-    ACADEMICO
 }
 
 class Venda {
@@ -28,6 +22,7 @@ class Venda {
     -nomeComprador: String
     -dataHora: LocalDateTime
     -ingressos: List<Ingresso>
+    -evento: Evento
     +calcularTotal(): BigDecimal
 }
 
@@ -40,16 +35,26 @@ abstract class Ingresso {
     +permiteEntradaAntecipada(): boolean
 }
 
-class Inteira
+class Inteira{
+    +calcularPreco(): BigDecimal
+    +permiteEntradaAntecipada(): boolean
+}
 
 class MeiaEntrada {
     -justificativa: String
+    +calcularPreco(): BigDecimal
+    +permiteEntradaAntecipada(): boolean
 }
 
-class VIP
-class Promocional
+class VIP{
+    +calcularPreco(): BigDecimal
+    +permiteEntradaAntecipada(): boolean
+}
+class Promocional{
+    +calcularPreco(): BigDecimal
+    +permiteEntradaAntecipada(): boolean
+}
 
-Evento --> TipoEvento
 Evento <-- Venda
 Venda *-- Ingresso
 Ingresso --> Evento
