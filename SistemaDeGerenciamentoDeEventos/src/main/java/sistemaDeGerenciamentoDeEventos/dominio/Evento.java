@@ -7,11 +7,11 @@ import java.util.List;
 
 public class Evento{
 
-    private int id, capacidadeMax, limitePromo, vendidosTotal;
+    private int id, capacidadeMax, vendidosTotal;
     private String titulo, descricao, local;
     private LocalDate data;
     private LocalTime horaInicio;
-    private BigDecimal precoBase, percentDescontoProm;
+    private BigDecimal precoBase;
     private List<Venda> vendas;
 
     public Evento(int id, String titulo, String local, int capMax,BigDecimal preco, BigDecimal precoDesc){
@@ -20,7 +20,6 @@ public class Evento{
         this.local = local;
         capacidadeMax = capMax;
         this.precoBase = preco;
-        this.percentDescontoProm = precoDesc;
     }
 
     public void addListaVenda(Venda aux){
@@ -37,18 +36,14 @@ public class Evento{
     public int calcularDisponibilidadePromocional(){
         // placeholder
         return 101;
-
     }
 
-    public BigDecimal calcularOcupacao(){
-        BigDecimal lotacao = (vendidosTotal/capacidadeMax)*100;
+    public int calcularOcupacao(){
+        int lotacao = (vendidosTotal/capacidadeMax)*100;
         return lotacao;
     }
 
     public BigDecimal getPrecoBase(){
         return precoBase;
-    }
-    public BigDecimal getPercentDescontoProm(){
-        return percentDescontoProm;
     }
 }

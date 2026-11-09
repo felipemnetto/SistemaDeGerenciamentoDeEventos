@@ -2,6 +2,7 @@ package sistemaDeGerenciamentoDeEventos.dominio;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Venda {
 
@@ -25,7 +26,7 @@ public class Venda {
     }
     public void RemoveIngresso(Ingresso aux){
         total = total.subtract(aux.calcularPreco());
-        ingressos.revome(aux);
+        ingressos.remove(aux);
     }
 
     public int QuantIngresso(){
@@ -35,8 +36,6 @@ public class Venda {
         */
     }
     public BigDecimal calcularTotal(){
-
-        return Total;
-
+        return total;
     }
 }

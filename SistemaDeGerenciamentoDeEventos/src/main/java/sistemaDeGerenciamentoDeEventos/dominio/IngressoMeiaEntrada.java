@@ -5,20 +5,19 @@ import java.math.BigDecimal;
 public class IngressoMeiaEntrada extends Ingresso {
     private String justificativa;
 
-    public IngressoMeiaEntrada(String nome, String cpf,int id,BigDecimal preco, String justificativa){
-        super(nome, cpf, id, preco);
+    public IngressoMeiaEntrada(String nome, String cpf,int id,BigDecimal precoFinal, String justificativa){
+        super(nome, cpf, id, precoFinal);
         this.justificativa=justificativa;
     }
-    
+
      @Override
     public BigDecimal calcularPreco(){
-        return preco;
+        return super.getPrecoFinal();
     }
 
     @Override
     public boolean permiteEntradaAntecipada(){
         return false;
-
     }
 
 }

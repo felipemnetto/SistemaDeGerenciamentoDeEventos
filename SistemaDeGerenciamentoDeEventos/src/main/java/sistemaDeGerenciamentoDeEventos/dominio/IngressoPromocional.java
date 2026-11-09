@@ -7,10 +7,17 @@ public class IngressoPromocional extends Ingresso{
         super(nome, cpf, id, preco);
     }
 
-    
+
     @Override
     public boolean permiteEntradaAntecipada(){
         return false;
+    }
+
+
+    @Override
+    public BigDecimal calcularPreco() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'calcularPreco'");
     }
 
 }
