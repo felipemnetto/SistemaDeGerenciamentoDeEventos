@@ -20,9 +20,37 @@ public class Venda {
         this.evento = evento;
     }
 
-    public void addIngresso(Ingresso aux){
-        total = total.add(aux.calcularPreco());
-        ingressos.add(aux);
+    public int getId() {
+        return id;
+    }
+
+    public String getNomeComprador() {
+        return nomeComprador;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
+
+    public List<Ingresso> getIngressos() {
+        return List.copyOf(ingressos);
+    }
+
+    public Evento getEvento() {
+        return evento;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public boolean addIngresso(Ingresso aux){
+        if(evento.calcularDisponibilidade()-ingressos.size()>0){
+            total = total.add(aux.calcularPreco());
+            ingressos.add(aux);
+            return true;
+        }
+        return false;
     }
     public void RemoveIngresso(Ingresso aux){
         total = total.subtract(aux.calcularPreco());
@@ -37,5 +65,17 @@ public class Venda {
     }
     public BigDecimal calcularTotal(){
         return total;
+    }
+
+    //se nao for usado pode tirar
+    public int QuantIngressoPromo(){
+        int contador = 0;
+        int a = ingressos.size();
+        for(int i = 0; i<a;i++){
+            if(ingressos.get(i) instanceof IngressoPromocional){
+                contador++;
+            }
+        }
+        return contador;
     }
 }

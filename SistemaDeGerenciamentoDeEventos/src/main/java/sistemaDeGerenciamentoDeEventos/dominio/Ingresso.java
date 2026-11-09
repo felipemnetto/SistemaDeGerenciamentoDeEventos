@@ -6,13 +6,13 @@ public abstract class Ingresso{
 
     private int id;
     private String nomeParticipante, cpfParticipante;
-    private BigDecimal precoFinal;
+    private Evento evento;
 
-    public Ingresso(String nome, String cpf, int id, BigDecimal precoFinal){
+    public Ingresso(String nome, String cpf, int id, Evento evento){
         this.nomeParticipante = nome;
         this.cpfParticipante = cpf;
         this.id = id;
-        this.precoFinal = precoFinal;
+        this.evento = evento;
     }
 
     public int getId() {
@@ -27,8 +27,8 @@ public abstract class Ingresso{
         return cpfParticipante;
     }
 
-    public BigDecimal getPrecoFinal() {
-        return precoFinal;
+    public Evento getEvento(){
+        return evento;
     }
 
     public abstract BigDecimal calcularPreco();

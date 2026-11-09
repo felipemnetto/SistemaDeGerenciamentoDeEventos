@@ -7,43 +7,74 @@ import java.util.List;
 
 public class Evento{
 
-    private int id, capacidadeMax, vendidosTotal;
+    private int id, capacidadeMax, limiteProm;
     private String titulo, descricao, local;
     private LocalDate data;
     private LocalTime horaInicio;
     private BigDecimal precoBase;
     private List<Venda> vendas;
 
-    public Evento(int id, String titulo, String local, int capMax,BigDecimal preco, BigDecimal precoDesc){
+    public Evento(int id, String titulo, String local, int capacidadeMax,BigDecimal preco, int limiteProm){
         this.id = id;
         this.titulo = titulo;
         this.local = local;
-        capacidadeMax = capMax;
+        this.capacidadeMax = capacidadeMax;
         this.precoBase = preco;
     }
 
     public void addListaVenda(Venda aux){
         vendas.add(aux);
-        vendidosTotal = vendidosTotal + aux.QuantIngresso();
-
     }
 
     public int calcularDisponibilidade(){
-        return capacidadeMax-vendidosTotal;
+        long qtdIngressos = vendas.stream()
+                                  .count();
 
+        return  capacidadeMax - (int) qtdIngressos;
     }
 
-    public int calcularDisponibilidadePromocional(){
-        // placeholder
-        return 101;
-    }
+    public boolean disponibilidadePromocional(){
+        long qtdProm = vendas.stream()
+                             .flatMap(venda -> venda.getIngressos().stream())
+                             .filter(i -> i instanceof IngressoPromocional)
+                             .count();
 
-    public int calcularOcupacao(){
-        int lotacao = (vendidosTotal/capacidadeMax)*100;
-        return lotacao;
+        return qtdProm < limiteProm;
     }
 
     public BigDecimal getPrecoBase(){
         return precoBase;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getCapacidadeMax() {
+        return capacidadeMax;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public String getLocal() {
+        return local;
+    }
+
+    public LocalDate getData() {
+        return data;
+    }
+
+    public LocalTime getHoraInicio() {
+        return horaInicio;
+    }
+
+    public List<Venda> getVendas() {
+        return List.copyOf(vendas);
     }
 }

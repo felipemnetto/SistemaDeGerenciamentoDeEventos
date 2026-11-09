@@ -3,13 +3,13 @@ package sistemaDeGerenciamentoDeEventos.dominio;
 import java.math.BigDecimal;
 
 public class IngressoInteira extends Ingresso {
-    public IngressoInteira(String nome, String cpf,int id,BigDecimal precoFinal){
-        super(nome, cpf, id, precoFinal);
+    public IngressoInteira(String nome, String cpf,int id, Evento evento){
+        super(nome, cpf, id, evento);
     }
 
     @Override
     public BigDecimal calcularPreco(){
-        return super.getPrecoFinal();
+        return getEvento().getPrecoBase();
     }
 
     @Override
