@@ -4,18 +4,18 @@ import java.math.BigDecimal;
 
 public abstract class Ingresso{
 
-    private int id;
-    private String nomeParticipante, cpfParticipante;
+    private String id, id_venda, nomeParticipante, cpfParticipante;
     private Evento evento;
 
-    public Ingresso(String nome, String cpf, int id, Evento evento){
+    public Ingresso(String nome, String cpf, String id, String id_venda,Evento evento){
         this.nomeParticipante = nome;
         this.cpfParticipante = cpf;
         this.id = id;
+        this.id_venda = id_venda;
         this.evento = evento;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

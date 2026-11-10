@@ -2,25 +2,30 @@ package sistemaDeGerenciamentoDeEventos.dominio;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Venda {
 
-    private int id;
-    private String nomeComprador;
+    private String id, nomeComprador;
     private LocalDateTime dataHora;
     private List<Ingresso> ingressos;
     private Evento evento;
-    private BigDecimal total;
+    private BigDecimal valorTotal;
 
-    public Venda(int id,String nome,LocalDateTime dataHora,Evento evento){
+    public Venda(String id,String nome,LocalDateTime dataHora,Evento evento){
         this.id = id;
-        nomeComprador = nome;
+        this.nomeComprador = nome;
         this.dataHora = dataHora;
         this.evento = evento;
+        this.ingressos = new LinkedList<>();
+        this.valorTotal = BigDecimal.valueOf(0);
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -41,41 +46,62 @@ public class Venda {
     }
 
     public BigDecimal getTotal() {
-        return total;
+        return valorTotal;
     }
 
-    public boolean addIngresso(Ingresso aux){
-        if(evento.calcularDisponibilidade()-ingressos.size()>0){
-            total = total.add(aux.calcularPreco());
-            ingressos.add(aux);
-            return true;
+    public boolean addIngresso(List<Ingresso> novosIngressos){ // Como vai surgir essa lista?
+        if(novosIngressos == null){
+            return false;
         }
-        return false;
-    }
-    public void RemoveIngresso(Ingresso aux){
-        total = total.subtract(aux.calcularPreco());
-        ingressos.remove(aux);
+        if(evento.calcularDisponibilidade() < novosIngressos.size()){
+            return false;
+        }
+
+        Set<String> cpfs = novosIngressos.stream()
+            .map(Ingresso::getCpfParticipante)
+            .collect(Collectors.toSet());
+
+        if(cpfs.size() != novosIngressos.size()){
+            return false;
+        }
+
+        boolean possuiEventoDiferente = novosIngressos.stream()
+                .anyMatch(ingresso -> ingresso.getEvento() != evento);
+
+        if(possuiEventoDiferente){
+            return false;
+        }
+
+        int quantidadePromocional = (int) novosIngressos.stream()
+            .filter(ingresso -> ingresso instanceof IngressoPromocional)
+            .count();
+
+        if (quantidadePromocional > evento.disponibilidadePromocional()) {
+            return false;
+        }
+        BigDecimal totalNovosIngressos = novosIngressos.stream()
+                    .map(Ingresso::calcularPreco)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        ingressos.addAll(novosIngressos);
+        valorTotal = valorTotal.add(totalNovosIngressos);
+        return true;
     }
 
-    public int QuantIngresso(){
+    public int quantIngresso(){
         return ingressos.size();
         /* esse metodo e para facilitar o metodo
             de calcular ocupacao la no evento
         */
     }
     public BigDecimal calcularTotal(){
-        return total;
+        return valorTotal;
     }
 
     //se nao for usado pode tirar
-    public int QuantIngressoPromo(){
-        int contador = 0;
-        int a = ingressos.size();
-        for(int i = 0; i<a;i++){
-            if(ingressos.get(i) instanceof IngressoPromocional){
-                contador++;
-            }
-        }
-        return contador;
+    public int quantIngressoPromo(){
+        return (int) ingressos.stream()
+            .filter(ingresso -> ingresso instanceof IngressoPromocional)
+            .count();
     }
 }

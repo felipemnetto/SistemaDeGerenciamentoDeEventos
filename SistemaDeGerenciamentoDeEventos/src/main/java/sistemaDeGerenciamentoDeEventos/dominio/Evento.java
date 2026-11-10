@@ -3,50 +3,63 @@ package sistemaDeGerenciamentoDeEventos.dominio;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Evento{
 
-    private int id, capacidadeMax, limiteProm;
-    private String titulo, descricao, local;
+    private int capacidadeMax, limiteProm;
+    private String id, titulo, descricao, local;
     private LocalDate data;
-    private LocalTime horaInicio;
-    private BigDecimal precoBase;
+    private LocalTime horario_inicio;
+    private BigDecimal precoBase, descontoPromocional;
     private List<Venda> vendas;
 
-    public Evento(int id, String titulo, String local, int capacidadeMax,BigDecimal preco, int limiteProm){
+    public Evento(String id, String titulo, String Descricao, String local,
+            LocalDate data, LocalTime horario_inicio, int capacidadeMax, BigDecimal precoBase){
+
         this.id = id;
         this.titulo = titulo;
+        this.descricao = descricao;
         this.local = local;
+        this.data = data;
+        this.horario_inicio = horario_inicio;
         this.capacidadeMax = capacidadeMax;
-        this.precoBase = preco;
+        this.precoBase = precoBase;
+        this.limiteProm = (int) (capacidadeMax * 0.2);
+        this.vendas = new LinkedList<>();
     }
 
-    public void addListaVenda(Venda aux){
-        vendas.add(aux);
+    public boolean addListaVenda(Venda aux){
+        if(!vendas.contains(aux)){
+            vendas.add(aux);
+            return true;
+        }
+        return false;
     }
 
     public int calcularDisponibilidade(){
-        long qtdIngressos = vendas.stream()
-                                  .count();
+        int qtdIngressos = (int) vendas.stream()
+                                       .flatMap(venda -> venda.getIngressos().stream())
+                                       .count();
 
-        return  capacidadeMax - (int) qtdIngressos;
+        return  capacidadeMax - qtdIngressos;
     }
 
-    public boolean disponibilidadePromocional(){
-        long qtdProm = vendas.stream()
+    public int disponibilidadePromocional(){
+        int qtdProm = (int) vendas.stream()
                              .flatMap(venda -> venda.getIngressos().stream())
                              .filter(i -> i instanceof IngressoPromocional)
                              .count();
 
-        return qtdProm < limiteProm;
+        return limiteProm - qtdProm;
     }
 
     public BigDecimal getPrecoBase(){
         return precoBase;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -71,7 +84,7 @@ public class Evento{
     }
 
     public LocalTime getHoraInicio() {
-        return horaInicio;
+        return horario_inicio;
     }
 
     public List<Venda> getVendas() {

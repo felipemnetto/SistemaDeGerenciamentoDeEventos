@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 public class IngressoVip extends Ingresso{
     private static final BigDecimal multiplicador = BigDecimal.valueOf(1.5);
-    public IngressoVip(String nome, String cpf,int id, Evento evento){
-        super(nome, cpf, id, evento);
+    public IngressoVip(String nome, String cpf,String id, String id_venda, Evento evento){
+        super(nome, cpf, id, id_venda, evento);
     }
 
 
