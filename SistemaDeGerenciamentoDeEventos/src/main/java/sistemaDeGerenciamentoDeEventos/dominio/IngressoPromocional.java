@@ -3,7 +3,6 @@ package sistemaDeGerenciamentoDeEventos.dominio;
 import java.math.BigDecimal;
 
 public class IngressoPromocional extends Ingresso{
-    private static final BigDecimal multiplicador = BigDecimal.valueOf(0.75);
     public IngressoPromocional(String nome, String cpf,String id, String id_venda, Evento evento){
         super(nome, cpf, id, id_venda, evento);
     }
@@ -15,7 +14,11 @@ public class IngressoPromocional extends Ingresso{
 
     @Override
     public BigDecimal calcularPreco() {
-        return getEvento().getPrecoBase().multiply(multiplicador);
+        return getEvento()
+              .getPrecoBase()
+              .multiply(super.getEvento()
+              .getPercentDescontoPromocional()
+              .divide(BigDecimal.valueOf(100)));
 
     }
 

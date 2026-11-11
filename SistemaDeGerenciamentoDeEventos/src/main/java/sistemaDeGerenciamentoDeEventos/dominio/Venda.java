@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,27 +48,33 @@ public class Venda {
         return valorTotal;
     }
 
-    public boolean addIngresso(List<Ingresso> novosIngressos){ // Como vai surgir essa lista?
-        if(novosIngressos == null){
-            return false;
+    public void addIngresso(List<Ingresso> novosIngressos){
+        if(novosIngressos == null || novosIngressos.size() == 0){
+            throw new RegraDeNegocioException("A venda deve possuir pelo menos um ingresso.");
         }
+
+        if (!evento.aceitaVendas()) {
+            throw new RegraDeNegocioException("Não é possível vender ingressos para eventos passados.");
+        }
+
         if(evento.calcularDisponibilidade() < novosIngressos.size()){
-            return false;
+            throw new RegraDeNegocioException("Limite de ingressos excedido.");
         }
 
         Set<String> cpfs = novosIngressos.stream()
-            .map(Ingresso::getCpfParticipante)
+            .map(ingresso -> ingresso.getCpfParticipante())
             .collect(Collectors.toSet());
 
+
         if(cpfs.size() != novosIngressos.size()){
-            return false;
+            throw new RegraDeNegocioException("Não é possivel comprar ingressos que utilizem o mesmo CPF.");
         }
 
         boolean possuiEventoDiferente = novosIngressos.stream()
                 .anyMatch(ingresso -> ingresso.getEvento() != evento);
 
         if(possuiEventoDiferente){
-            return false;
+            throw new RegraDeNegocioException("Não é possível comprar ingressos para eventos diferentes.");
         }
 
         int quantidadePromocional = (int) novosIngressos.stream()
@@ -77,15 +82,19 @@ public class Venda {
             .count();
 
         if (quantidadePromocional > evento.disponibilidadePromocional()) {
-            return false;
+            throw new RegraDeNegocioException("O limite de ingressos promocionais para este evento foi excedido.");
         }
         BigDecimal totalNovosIngressos = novosIngressos.stream()
-                    .map(Ingresso::calcularPreco)
+                    .map(ingresso -> ingresso.calcularPreco())
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        if (!evento.addListaVenda(this)) {
+            throw new RegraDeNegocioException("Venda já registrada.");
+        }
 
         ingressos.addAll(novosIngressos);
         valorTotal = valorTotal.add(totalNovosIngressos);
-        return true;
+        evento.addListaVenda(this);
     }
 
     public int quantIngresso(){

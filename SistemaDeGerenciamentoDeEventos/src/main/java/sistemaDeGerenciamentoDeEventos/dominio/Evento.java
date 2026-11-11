@@ -2,6 +2,7 @@ package sistemaDeGerenciamentoDeEventos.dominio;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,11 +13,12 @@ public class Evento{
     private String id, titulo, descricao, local;
     private LocalDate data;
     private LocalTime horario_inicio;
-    private BigDecimal precoBase, descontoPromocional;
+    private BigDecimal precoBase, percentDescontoPromocional;
     private List<Venda> vendas;
 
-    public Evento(String id, String titulo, String Descricao, String local,
-            LocalDate data, LocalTime horario_inicio, int capacidadeMax, BigDecimal precoBase){
+    public Evento(String id, String titulo, String descricao, String local,
+            LocalDate data, LocalTime horario_inicio, int capacidadeMax, BigDecimal precoBase,
+            int limiteProm, BigDecimal percentDescontoPromocional){
 
         this.id = id;
         this.titulo = titulo;
@@ -26,11 +28,19 @@ public class Evento{
         this.horario_inicio = horario_inicio;
         this.capacidadeMax = capacidadeMax;
         this.precoBase = precoBase;
-        this.limiteProm = (int) (capacidadeMax * 0.2);
+        this.limiteProm = limiteProm;
+        this.percentDescontoPromocional = percentDescontoPromocional;
         this.vendas = new LinkedList<>();
     }
 
     public boolean addListaVenda(Venda aux){
+        if (aux == null) {
+            throw new RegraDeNegocioException("A venda não pode ser nula.");
+        }
+        if (aux.getEvento() != this) {
+            throw new RegraDeNegocioException(
+                    "A venda pertence a outro evento.");
+        }
         if(!vendas.contains(aux)){
             vendas.add(aux);
             return true;
@@ -53,6 +63,18 @@ public class Evento{
                              .count();
 
         return limiteProm - qtdProm;
+    }
+
+    public int getLimiteProm() {
+        return limiteProm;
+    }
+
+    public LocalTime getHorario_inicio() {
+        return horario_inicio;
+    }
+
+    public BigDecimal getPercentDescontoPromocional() {
+        return percentDescontoPromocional;
     }
 
     public BigDecimal getPrecoBase(){
@@ -89,5 +111,11 @@ public class Evento{
 
     public List<Venda> getVendas() {
         return List.copyOf(vendas);
+    }
+
+    public boolean aceitaVendas() {
+        LocalDateTime inicio = LocalDateTime.of(data, horario_inicio);
+
+        return LocalDateTime.now().isBefore(inicio);
     }
 }

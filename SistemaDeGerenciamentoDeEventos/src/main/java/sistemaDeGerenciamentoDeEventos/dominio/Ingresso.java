@@ -19,6 +19,10 @@ public abstract class Ingresso{
         return id;
     }
 
+    public String getIdVenda(){
+        return id_venda;
+    }
+
     public String getNomeParticipante() {
         return nomeParticipante;
     }

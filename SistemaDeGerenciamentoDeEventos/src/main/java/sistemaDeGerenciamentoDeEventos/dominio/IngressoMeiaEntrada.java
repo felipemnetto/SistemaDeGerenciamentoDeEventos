@@ -11,7 +11,11 @@ public class IngressoMeiaEntrada extends Ingresso {
         this.justificativa=justificativa;
     }
 
-     @Override
+    public String getJustificativa(){
+        return justificativa;
+    }
+
+    @Override
     public BigDecimal calcularPreco(){
         return getEvento().getPrecoBase().multiply(multiplicador);
     }
