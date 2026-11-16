@@ -19,6 +19,7 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
+import sistemaDeGerenciamentoDeEventos.Sistema;
 import sistemaDeGerenciamentoDeEventos.dominio.Evento;
 import sistemaDeGerenciamentoDeEventos.dominio.Ingresso;
 import sistemaDeGerenciamentoDeEventos.dominio.IngressoInteira;
@@ -26,7 +27,6 @@ import sistemaDeGerenciamentoDeEventos.dominio.IngressoMeiaEntrada;
 import sistemaDeGerenciamentoDeEventos.dominio.IngressoPromocional;
 import sistemaDeGerenciamentoDeEventos.dominio.IngressoVip;
 import sistemaDeGerenciamentoDeEventos.dominio.RegraDeNegocioException;
-import sistemaDeGerenciamentoDeEventos.dominio.Sistema;
 import sistemaDeGerenciamentoDeEventos.dominio.Venda;
 
 @Route("")

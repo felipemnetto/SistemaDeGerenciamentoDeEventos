@@ -16,6 +16,19 @@ public class Venda {
     private BigDecimal valorTotal;
 
     public Venda(String id,String nome,LocalDateTime dataHora,Evento evento){
+
+        if (id == null || id.isBlank() ||
+            nome == null || nome.isBlank()) {
+            throw new RegraDeNegocioException(
+                "O ID e o nome do comprador são obrigatórios."
+            );
+        }
+        if (dataHora == null || evento == null) {
+            throw new RegraDeNegocioException(
+                "A data da venda e o evento são obrigatórios."
+            );
+        }
+
         this.id = id;
         this.nomeComprador = nome;
         this.dataHora = dataHora;
@@ -44,7 +57,7 @@ public class Venda {
         return evento;
     }
 
-    public BigDecimal getTotal() {
+    public BigDecimal getValorTotal() {
         return valorTotal;
     }
 
@@ -53,7 +66,7 @@ public class Venda {
             throw new RegraDeNegocioException("A venda deve possuir pelo menos um ingresso.");
         }
 
-        if (!evento.aceitaVendas()) {
+        if (!evento.verificaHora(dataHora)) {
             throw new RegraDeNegocioException("Não é possível vender ingressos para eventos passados.");
         }
 

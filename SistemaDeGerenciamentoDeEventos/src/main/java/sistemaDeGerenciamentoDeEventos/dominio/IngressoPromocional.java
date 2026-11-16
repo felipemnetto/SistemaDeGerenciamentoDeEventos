@@ -16,10 +16,8 @@ public class IngressoPromocional extends Ingresso{
     public BigDecimal calcularPreco() {
         return getEvento()
               .getPrecoBase()
-              .multiply(super.getEvento()
-              .getPercentDescontoPromocional()
-              .divide(BigDecimal.valueOf(100)));
-
+              .multiply(BigDecimal.valueOf(100).subtract(super.getEvento().getPercentDescontoPromocional()))
+              .divide(BigDecimal.valueOf(100));
     }
 
 }

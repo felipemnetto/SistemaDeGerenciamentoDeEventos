@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Evento{
 
-    private int capacidadeMax, limiteProm;
+    private int capacidadeMax, limiteProm, countIngressos, countIngressosProm;
     private String id, titulo, descricao, local;
     private LocalDate data;
     private LocalTime horario_inicio;
@@ -19,6 +19,40 @@ public class Evento{
     public Evento(String id, String titulo, String descricao, String local,
             LocalDate data, LocalTime horario_inicio, int capacidadeMax, BigDecimal precoBase,
             int limiteProm, BigDecimal percentDescontoPromocional){
+
+        if (id == null || id.isBlank() ||
+            titulo == null || titulo.isBlank() ||
+            descricao == null || descricao.isBlank() ||
+            local == null || local.isBlank()) {
+            throw new RegraDeNegocioException(
+                "Os dados textuais do evento são obrigatórios."
+            );
+        }
+        if (data == null || horario_inicio == null) {
+            throw new RegraDeNegocioException(
+                "A data e o horário do evento são obrigatórios."
+            );
+        }
+        if (capacidadeMax <= 0 || limiteProm < 0 ||
+            limiteProm > capacidadeMax) {
+            throw new RegraDeNegocioException(
+                "Capacidade ou limite promocional inválido."
+            );
+        }
+        if (precoBase == null || precoBase.compareTo(BigDecimal.ZERO) < 0) {
+            throw new RegraDeNegocioException(
+                "O preço base não pode ser nulo ou negativo."
+            );
+        }
+        if (percentDescontoPromocional == null ||
+            percentDescontoPromocional.compareTo(BigDecimal.ZERO) < 0 ||
+            percentDescontoPromocional.compareTo(
+                new BigDecimal("100")) > 0) {
+
+            throw new RegraDeNegocioException(
+                "O desconto deve estar entre 0 e 100%."
+            );
+        }
 
         this.id = id;
         this.titulo = titulo;
@@ -43,26 +77,20 @@ public class Evento{
         }
         if(!vendas.contains(aux)){
             vendas.add(aux);
+            countIngressos += aux.quantIngresso();
+            countIngressosProm += aux.quantIngressoPromo();
             return true;
         }
+
         return false;
     }
 
     public int calcularDisponibilidade(){
-        int qtdIngressos = (int) vendas.stream()
-                                       .flatMap(venda -> venda.getIngressos().stream())
-                                       .count();
-
-        return  capacidadeMax - qtdIngressos;
+        return  capacidadeMax - countIngressos;
     }
 
     public int disponibilidadePromocional(){
-        int qtdProm = (int) vendas.stream()
-                             .flatMap(venda -> venda.getIngressos().stream())
-                             .filter(i -> i instanceof IngressoPromocional)
-                             .count();
-
-        return limiteProm - qtdProm;
+        return limiteProm - countIngressosProm;
     }
 
     public int getLimiteProm() {
@@ -113,9 +141,11 @@ public class Evento{
         return List.copyOf(vendas);
     }
 
-    public boolean aceitaVendas() {
-        LocalDateTime inicio = LocalDateTime.of(data, horario_inicio);
+    public boolean verificaHoras() {
+        return verificaHora(LocalDateTime.now());
+    }
 
-        return LocalDateTime.now().isBefore(inicio);
+    public boolean verificaHora(LocalDateTime momento) {
+        return momento.isBefore(LocalDateTime.of(data, horario_inicio));
     }
 }
