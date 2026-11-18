@@ -19,7 +19,6 @@ import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 
-import sistemaDeGerenciamentoDeEventos.Sistema;
 import sistemaDeGerenciamentoDeEventos.dominio.Evento;
 import sistemaDeGerenciamentoDeEventos.dominio.Ingresso;
 import sistemaDeGerenciamentoDeEventos.dominio.IngressoInteira;
@@ -44,9 +43,6 @@ public class MainView extends VerticalLayout {
     private final Span lblTotalGeral = new Span("Total: R$ 0,00");
 
     public MainView() {
-        List<Evento> eventos = Sistema.getInstance().getEventos(); // [cite: 6]
-        this.eventoAtual = eventos.isEmpty() ? null : eventos.get(0);
-
         getElement().setAttribute("theme", "dark");
 
         setSizeFull();
