@@ -1,5 +1,6 @@
 package sistemaDeGerenciamentoDeEventos.ui;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -16,7 +17,7 @@ public final class Formatos {
         return data == null ? "" : data.format(DATA);
     }
 
-    public static String dinheiro(double valor) {
+    public static String dinheiro(BigDecimal valor) {
         return String.format(BRASIL, "R$ %.2f", valor);
     }
 }

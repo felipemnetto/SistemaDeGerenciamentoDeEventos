@@ -101,7 +101,7 @@ public class Venda {
                     .map(ingresso -> ingresso.calcularPreco())
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        if (!evento.addListaVenda(this)) {
+        if (evento.getVendas().contains(this)) {
             throw new RegraDeNegocioException("Venda já registrada.");
         }
 
