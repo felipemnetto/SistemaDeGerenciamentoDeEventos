@@ -93,12 +93,12 @@ public class Evento{
         return limiteProm - countIngressosProm;
     }
 
+    public double percentualOcupacao() {
+    return (capacidadeMax - calcularDisponibilidade()) / (double) capacidadeMax;
+}
+
     public int getLimiteProm() {
         return limiteProm;
-    }
-
-    public LocalTime getHorario_inicio() {
-        return horario_inicio;
     }
 
     public BigDecimal getPercentDescontoPromocional() {

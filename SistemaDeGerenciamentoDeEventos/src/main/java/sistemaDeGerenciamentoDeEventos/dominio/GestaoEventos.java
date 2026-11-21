@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import sistemaDeGerenciamentoDeEventos.LeitorDadosCsv;
@@ -72,6 +74,19 @@ public class GestaoEventos {
             default -> throw new IllegalArgumentException("Modalidade desconhecida: " + i.modalidade());
         };
     }
+
+    //metodo que filtra os eventos para mostrar na aba de eventos (enunciado pede filtro por data ou local)
+    public List<Evento> filtrarEventos(String situacao, LocalDate de, LocalDate ate, String local) {
+    return eventos.stream()
+            .filter(e -> situacao == null || situacao.equals("Todos")
+                      || (situacao.equals("Futuros") == e.verificaHoras()))
+            .filter(e -> de == null || !e.getData().isBefore(de))
+            .filter(e -> ate == null || !e.getData().isAfter(ate))
+            .filter(e -> local == null || local.isBlank()
+                      || e.getLocal().toLowerCase().contains(local.trim().toLowerCase()))
+            .sorted(Comparator.comparing(Evento::getData).thenComparing(Evento::getHoraInicio))
+            .toList();
+}
 
     public List<Evento> getEventos() {
         return List.copyOf(eventos);
