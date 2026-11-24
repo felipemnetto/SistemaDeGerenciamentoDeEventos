@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -63,15 +64,21 @@ public class GestaoEventos {
         }
     }
 
+    // usado pela carga dos CSV: só repassa os campos da linha
     private Ingresso criarIngresso(IngressoCsv i, Evento evento) {
-        String nome = i.participanteNome();
-        String cpf = i.participanteCpf();
-        return switch (i.modalidade()) {
-            case "INTEIRA" -> new IngressoInteira(nome, cpf, i.id(), i.vendaId(), evento);
-            case "MEIA_ENTRADA" -> new IngressoMeiaEntrada(nome, cpf, i.id(), i.vendaId(), i.justificativa(), evento);
-            case "VIP" -> new IngressoVip(nome, cpf, i.id(), i.vendaId(), evento);
-            case "PROMOCIONAL" -> new IngressoPromocional(nome, cpf, i.id(), i.vendaId(), evento);
-            default -> throw new IllegalArgumentException("Modalidade desconhecida: " + i.modalidade());
+        return criarIngresso(i.id(), i.vendaId(), evento, i.modalidade(),
+                i.participanteNome(), i.participanteCpf(), i.justificativa());
+    }
+
+    // o único switch que escolhe a subclasse de Ingresso
+    private Ingresso criarIngresso(String id, String idVenda, Evento evento, String modalidade,
+                                   String nome, String cpf, String justificativa) {
+        return switch (modalidade) {
+            case "INTEIRA" -> new IngressoInteira(nome, cpf, id, idVenda, evento);
+            case "MEIA_ENTRADA" -> new IngressoMeiaEntrada(nome, cpf, id, idVenda, justificativa, evento);
+            case "VIP" -> new IngressoVip(nome, cpf, id, idVenda, evento);
+            case "PROMOCIONAL" -> new IngressoPromocional(nome, cpf, id, idVenda, evento);
+            default -> throw new IllegalArgumentException("Modalidade desconhecida: " + modalidade);
         };
     }
 
@@ -86,7 +93,46 @@ public class GestaoEventos {
                       || e.getLocal().toLowerCase().contains(local.trim().toLowerCase()))
             .sorted(Comparator.comparing(Evento::getData).thenComparing(Evento::getHoraInicio))
             .toList();
-}
+    }
+
+    private int proximoIngresso = 1;
+
+    // usado pela tela: valida os dados digitados e devolve o ingresso do tipo certo
+    public Ingresso novoIngresso(Evento evento, String modalidade, String nome, String cpf, String justificativa) {
+        if (evento == null) {
+            throw new RegraDeNegocioException("Selecione o evento.");
+        }
+        if (modalidade == null) {
+            throw new RegraDeNegocioException("Escolha a modalidade.");
+        }
+        if (nome == null || nome.isBlank()) {
+            throw new RegraDeNegocioException("Informe o nome do participante.");
+        }
+        if (cpf == null || !cpf.trim().matches("\\d{11}")) {
+            throw new RegraDeNegocioException("O CPF deve ter exatamente 11 dígitos.");
+        }
+        if (modalidade.equals("MEIA_ENTRADA") && (justificativa == null || justificativa.isBlank())) {
+            throw new RegraDeNegocioException("Informe a justificativa da meia-entrada.");
+        }
+        return criarIngresso("ING-" + proximoIngresso++, null, evento, modalidade, nome.trim(), cpf.trim(), justificativa);
+    }
+
+    private int proximaVenda = 1;
+
+    // usado pelo "Pagar" do carrinho. Tudo ou nada: se Venda.addIngresso recusar, nada é registrado.
+    // Quem esvazia o carrinho é a tela, só depois que este método voltar sem erro.
+    public Venda registrarVenda(Evento evento, String comprador, List<Ingresso> ingressos) {
+        if (evento == null) {
+            throw new RegraDeNegocioException("Selecione o evento.");
+        }
+        if (comprador == null || comprador.isBlank()) {
+            throw new RegraDeNegocioException("Informe o nome do comprador.");
+        }
+        Venda venda = new Venda("VEND-" + proximaVenda, comprador.trim(), LocalDateTime.now(), evento);
+        venda.addIngresso(ingressos);
+        proximaVenda++; // só avança se a venda foi aceita
+        return venda;
+    }
 
     public List<Evento> getEventos() {
         return List.copyOf(eventos);
