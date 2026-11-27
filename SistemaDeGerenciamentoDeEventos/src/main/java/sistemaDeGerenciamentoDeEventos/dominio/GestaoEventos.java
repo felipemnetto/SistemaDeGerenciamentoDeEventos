@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -82,7 +83,7 @@ public class GestaoEventos {
         };
     }
 
-    //metodo que filtra os eventos para mostrar na aba de eventos (enunciado pede filtro por data ou local)
+    //metodo que filtra os eventos para mostrar na aba de eventos
     public List<Evento> filtrarEventos(String situacao, LocalDate de, LocalDate ate, String local) {
     return eventos.stream()
             .filter(e -> situacao == null || situacao.equals("Todos")
@@ -97,7 +98,7 @@ public class GestaoEventos {
 
     private int proximoIngresso = 1;
 
-    // usado pela tela: valida os dados digitados e devolve o ingresso do tipo certo
+
     public Ingresso novoIngresso(Evento evento, String modalidade, String nome, String cpf, String justificativa) {
         if (evento == null) {
             throw new RegraDeNegocioException("Selecione o evento.");
@@ -115,6 +116,29 @@ public class GestaoEventos {
             throw new RegraDeNegocioException("Informe a justificativa da meia-entrada.");
         }
         return criarIngresso("ING-" + proximoIngresso++, null, evento, modalidade, nome.trim(), cpf.trim(), justificativa);
+    }
+
+    public Evento novoEvento(String titulo, String descricao, String local,
+            LocalDate data, LocalTime horario_inicio, Integer capacidadeMax, BigDecimal precoBase,
+            Integer limiteProm, BigDecimal percentDescontoPromocional){
+
+                if(titulo == null || descricao == null || local == null || data == null
+                    || horario_inicio == null || capacidadeMax == null || precoBase == null || limiteProm == null
+                    || percentDescontoPromocional == null){
+                        throw new RegraDeNegocioException("É preciso preencher todos os dados para cadastrar um evento.");
+                    }
+
+
+                //formata só pra manter o padrao que vem no csv, tipo E001, E002
+                String id = proximoIdEvento();
+
+                Evento novo = new Evento(id,titulo.trim(),descricao.trim(),local.trim(),data,horario_inicio,capacidadeMax,precoBase,limiteProm,percentDescontoPromocional);
+                eventos.add(novo);
+                return novo;
+            }
+
+    public String proximoIdEvento() {
+        return String.format("E%03d", eventos.size() + 1);
     }
 
     private int proximaVenda = 1;

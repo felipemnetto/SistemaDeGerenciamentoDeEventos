@@ -95,7 +95,7 @@ public class Evento{
 
     public double percentualOcupacao() {
     return (capacidadeMax - calcularDisponibilidade()) / (double) capacidadeMax;
-}
+    }
 
     public int getLimiteProm() {
         return limiteProm;

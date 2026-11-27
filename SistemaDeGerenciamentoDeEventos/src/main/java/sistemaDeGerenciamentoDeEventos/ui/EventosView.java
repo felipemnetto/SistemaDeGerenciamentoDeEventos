@@ -42,11 +42,10 @@ public class EventosView extends VerticalLayout {
 
         add(new H2("Eventos"), filtros, conteudo);
 
-        atualizar(); // por último: os componentes já existem
+        atualizar();
     }
 
     //filtros dos eventos da tabela
-
     private void configurarFiltros() {
         situacao.setItems("Todos", "Futuros", "Realizados");
         situacao.setValue("Todos");
